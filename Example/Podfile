@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'TMPlayer_Example' do
+  pod 'TMPlayer', :path => '../'
+
+  target 'TMPlayer_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

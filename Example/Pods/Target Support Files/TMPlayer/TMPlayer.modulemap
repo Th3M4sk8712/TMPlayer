@@ -1,0 +1,6 @@
+framework module TMPlayer {
+  umbrella header "TMPlayer-umbrella.h"
+
+  export *
+  module * { export * }
+}

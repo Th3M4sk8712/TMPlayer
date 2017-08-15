@@ -1,0 +1,6 @@
+framework module Pods_TMPlayer_Tests {
+  umbrella header "Pods-TMPlayer_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
