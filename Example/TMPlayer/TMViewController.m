@@ -29,7 +29,7 @@
     self.playerView.hasDownload = NO;
     self.playerView.hasPreviewView = YES;
     [self.playerView playerControlView: nil playerModel:playerModel];
-    [self.playerView addSubtitleURL:@"http://subtitle.hdcinemaz.com:1988/2016/The.Ten.Deadly.Sins.2016.e1.srt"];
+    //[self.playerView addSubtitleURL:@"..."];
     [self.playerView autoPlayTheVideo];
 }
 
