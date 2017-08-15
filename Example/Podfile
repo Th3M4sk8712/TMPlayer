@@ -1,7 +1,8 @@
 use_frameworks!
 
 target 'TMPlayer_Example' do
-  pod 'TMPlayer', :git => 'https://github.com/Th3M4sk8712/TMPlayer', :tag => '1.0.0'
+  #pod 'TMPlayer', :git => 'https://github.com/Th3M4sk8712/TMPlayer', :tag => '1.0.1'
+  pod 'Masonry'
 
   target 'TMPlayer_Tests' do
     inherit! :search_paths
