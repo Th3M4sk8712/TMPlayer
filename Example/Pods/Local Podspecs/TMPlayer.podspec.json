@@ -1,6 +1,6 @@
 {
   "name": "TMPlayer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "summary": "A perfect player based on AVPlayer made by renzifeng",
   "description": "A perfect player based on AVPlayer made by renzifeng, extend by Th3M4sk",
   "homepage": "https://github.com/Th3M4sk8712/TMPlayer",
@@ -13,14 +13,13 @@
   },
   "source": {
     "git": "https://github.com/Th3M4sk8712/TMPlayer.git",
-    "tag": "0.0.1"
+    "tag": "0.1.0"
   },
   "platforms": {
     "ios": "8.0"
   },
   "source_files": "TMPlayer/**/*.{h,m}",
   "resources": "TMPlayer/ZFPlayer.bundle",
-  "public_header_files": "Pod/Classes/**/*.h",
   "frameworks": [
     "UIKit",
     "MediaPlayer"
