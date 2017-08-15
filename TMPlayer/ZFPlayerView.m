@@ -124,7 +124,9 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @property (nonatomic, strong) NSDictionary           *resolutionDic;
 @end
 
-@implementation ZFPlayerView
+@implementation ZFPlayerView {
+    UIFont *currentFont;
+}
 #pragma mark - life Cycle
 
 /**
@@ -158,6 +160,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
     [self.controlView zf_playerCancelAutoFadeOutControlView];
     // 移除通知
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeObserver:self forKeyPath:@"isFullScreen"];
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     // 移除time观察者
     if (self.timeObserve) {
@@ -176,24 +179,25 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 // NgocNK: Subtitle
 - (void)addSubtitleView {
+    currentFont = [UIFont boldSystemFontOfSize: 18];
     self.subtitleLabel = [[UILabel alloc] init];
     self.subtitleLabel.numberOfLines = 0;
     self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
     self.subtitleLabel.textColor = [UIColor whiteColor];
     self.subtitleLabel.adjustsFontSizeToFitWidth = YES;
     self.subtitleLabel.minimumScaleFactor = 0.5;
-    self.subtitleLabel.font = [UIFont systemFontOfSize:15];
+    self.subtitleLabel.font = [UIFont boldSystemFontOfSize: 13];
     
     self.subtitleBackView = [[UIView alloc] init];
     self.subtitleBackView.layer.cornerRadius = 2;
-    self.subtitleBackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
+    self.subtitleBackView.backgroundColor = [UIColor blackColor];
     [self.subtitleBackView addSubview:self.subtitleLabel];
     self.subtitleBackView.hidden = true;
     
-    [self addSubview:self.subtitleBackView];
+    [self insertSubview:self.subtitleBackView atIndex:0];
     
     [self.subtitleBackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.mas_bottom).offset(-5);
+        make.bottom.equalTo(self.mas_bottom).offset(-20);
         make.centerX.equalTo(self.mas_centerX);
         make.width.lessThanOrEqualTo(self.mas_width).offset(-10).priority(750);
     }];
@@ -246,6 +250,25 @@ typedef NS_ENUM(NSInteger, PanDirection){
 - (void)addSubtitleURL:(NSString*)url {
     self.subtitle = [[TMSubtitle alloc] init: url];
     [self addSubtitleView];
+}
+
+- (void)setSubtitleFont:(UIFont *)font {
+    _subtitleLabel.font = font;
+    currentFont = font;
+}
+
+- (void)setSubtitleColor:(UIColor *)color {
+    _subtitleLabel.textColor = color;
+}
+
+- (void)setSubtitleBackViewColor:(UIColor *)color {
+    _subtitleBackView.backgroundColor = color;
+}
+
+- (void)setSubtitlePaddingBottom:(CGFloat)paddingBottom {
+    [_subtitleBackView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.mas_bottom).offset(-paddingBottom);
+    }];
 }
 
 - (NSInteger)getCurrentPlaybackTime {
@@ -620,6 +643,8 @@ typedef NS_ENUM(NSInteger, PanDirection){
             // 当tableview滚动时处理playerView的位置
             [self handleScrollOffsetWithDict:change];
         }
+    } else if ([keyPath isEqualToString:@"isFullScreen"]) {
+        _subtitleLabel.font = [UIFont fontWithName:currentFont.fontName size: _isFullScreen ? currentFont.pointSize : 13];
     }
 }
 
@@ -1353,6 +1378,8 @@ typedef NS_ENUM(NSInteger, PanDirection){
         [playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
         // 缓冲区有足够数据可以播放了
         [playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+        
+        [self addObserver:self forKeyPath:@"isFullScreen" options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 

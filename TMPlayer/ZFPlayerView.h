@@ -125,5 +125,9 @@ typedef NS_ENUM(NSInteger, ZFPlayerState) {
 // NgocNK
 - (void)addSubtitleURL:(NSString*)url;
 - (NSInteger)getCurrentPlaybackTime;
+- (void)setSubtitleFont:(UIFont *)font;
+- (void)setSubtitleColor:(UIColor *)color;
+- (void)setSubtitleBackViewColor:(UIColor *)color;
+- (void)setSubtitlePaddingBottom:(CGFloat)paddingBottom;
 
 @end

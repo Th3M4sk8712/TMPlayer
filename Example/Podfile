@@ -6,7 +6,6 @@ target 'TMPlayer_Example' do
 
   target 'TMPlayer_Tests' do
     inherit! :search_paths
-
     
   end
 end
