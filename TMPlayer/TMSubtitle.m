@@ -71,7 +71,8 @@
     NSPredicate *initialPredicate = [NSPredicate predicateWithFormat:@"(%@ >= %K) AND (%@ <= %K)", @(currentPlaybackTime), @"start", @(currentPlaybackTime), @"end"];
     NSArray *objectsFound = [subtitlesParts filteredArrayUsingPredicate:initialPredicate];
     NSDictionary *lastFounded = (NSDictionary *)[objectsFound lastObject];
-    return lastFounded[@"text"];
+    NSString *text = lastFounded[@"text"];
+    return [text stringByReplacingOccurrencesOfString:@"<[^>]+>" withString:@"" options: NSRegularExpressionSearch range: NSMakeRange(0, text.length)];
 }
 
 - (NSTimeInterval)timeFromString:(NSString *)timeString {

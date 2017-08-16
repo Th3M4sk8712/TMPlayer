@@ -125,7 +125,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @end
 
 @implementation ZFPlayerView {
-    UIFont *currentFont;
+    CGFloat textSizeNormal, textSizeFullScreen;
 }
 #pragma mark - life Cycle
 
@@ -160,7 +160,6 @@ typedef NS_ENUM(NSInteger, PanDirection){
     [self.controlView zf_playerCancelAutoFadeOutControlView];
     // 移除通知
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self removeObserver:self forKeyPath:@"isFullScreen"];
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     // 移除time观察者
     if (self.timeObserve) {
@@ -178,8 +177,13 @@ typedef NS_ENUM(NSInteger, PanDirection){
 }
 
 // NgocNK: Subtitle
+- (BOOL)isIphone {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone;
+}
+
 - (void)addSubtitleView {
-    currentFont = [UIFont boldSystemFontOfSize: 18];
+    textSizeNormal = [self isIphone] ? 13 : 15;
+    textSizeFullScreen = [self isIphone] ? 18 : 30;
     self.subtitleLabel = [[UILabel alloc] init];
     self.subtitleLabel.numberOfLines = 0;
     self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
@@ -197,7 +201,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
     [self insertSubview:self.subtitleBackView atIndex:0];
     
     [self.subtitleBackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.mas_bottom).offset(-20);
+        make.bottom.equalTo(self.mas_bottom).offset([self isIphone] ? -20 : -100);
         make.centerX.equalTo(self.mas_centerX);
         make.width.lessThanOrEqualTo(self.mas_width).offset(-10).priority(750);
     }];
@@ -246,15 +250,21 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 #pragma mark - Public Method
 
+- (void)setIsFullScreen:(BOOL)isFullScreen {
+    _subtitleLabel.font = [UIFont boldSystemFontOfSize: isFullScreen ? textSizeFullScreen : textSizeNormal];
+    _isFullScreen = isFullScreen;
+}
+
 // NgocNK
 - (void)addSubtitleURL:(NSString*)url {
     self.subtitle = [[TMSubtitle alloc] init: url];
     [self addSubtitleView];
 }
 
-- (void)setSubtitleFont:(UIFont *)font {
-    _subtitleLabel.font = font;
-    currentFont = font;
+- (void)setSubtitleTextSize:(CGFloat)fullScreen textSizeNormal:(CGFloat)normal {
+    textSizeFullScreen = fullScreen;
+    textSizeNormal = normal;
+    _subtitleLabel.font = [UIFont boldSystemFontOfSize: _isFullScreen ? textSizeFullScreen : textSizeNormal];
 }
 
 - (void)setSubtitleColor:(UIColor *)color {
@@ -643,8 +653,6 @@ typedef NS_ENUM(NSInteger, PanDirection){
             // 当tableview滚动时处理playerView的位置
             [self handleScrollOffsetWithDict:change];
         }
-    } else if ([keyPath isEqualToString:@"isFullScreen"]) {
-        _subtitleLabel.font = [UIFont fontWithName:currentFont.fontName size: _isFullScreen ? currentFont.pointSize : 13];
     }
 }
 
@@ -1378,8 +1386,6 @@ typedef NS_ENUM(NSInteger, PanDirection){
         [playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
         // 缓冲区有足够数据可以播放了
         [playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
-        
-        [self addObserver:self forKeyPath:@"isFullScreen" options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 

@@ -33,6 +33,10 @@
     [self.playerView autoPlayTheVideo];
 }
 
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

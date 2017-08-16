@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TMPlayer'
-  s.version          = '1.0.2'
-  s.summary          = 'A perfect player based on AVPlayer made by renzifeng'
+  s.version          = '1.0.3'
+  s.summary          = 'A perfect player based on ZFPlayer'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-A perfect player based on AVPlayer made by renzifeng, extend by Th3M4sk
+A perfect player based on ZFPlayer made by renzifeng, extend by Nguyễn Khánh Ngọc
                        DESC
 
   s.homepage         = 'https://github.com/Th3M4sk8712/TMPlayer'
