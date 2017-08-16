@@ -125,7 +125,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @end
 
 @implementation ZFPlayerView {
-    CGFloat textSizeNormal, textSizeFullScreen;
+    CGFloat textSizeNormal, textSizeFullScreen, paddingSubtileBottom;
 }
 #pragma mark - life Cycle
 
@@ -184,13 +184,14 @@ typedef NS_ENUM(NSInteger, PanDirection){
 - (void)addSubtitleView {
     textSizeNormal = [self isIphone] ? 13 : 15;
     textSizeFullScreen = [self isIphone] ? 18 : 30;
+    paddingSubtileBottom = [self isIphone] ? -20 : -100;
     self.subtitleLabel = [[UILabel alloc] init];
     self.subtitleLabel.numberOfLines = 0;
     self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
     self.subtitleLabel.textColor = [UIColor whiteColor];
     self.subtitleLabel.adjustsFontSizeToFitWidth = YES;
     self.subtitleLabel.minimumScaleFactor = 0.5;
-    self.subtitleLabel.font = [UIFont boldSystemFontOfSize: 13];
+    self.subtitleLabel.font = [UIFont boldSystemFontOfSize: textSizeNormal];
     
     self.subtitleBackView = [[UIView alloc] init];
     self.subtitleBackView.layer.cornerRadius = 2;
@@ -201,7 +202,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
     [self insertSubview:self.subtitleBackView atIndex:0];
     
     [self.subtitleBackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.mas_bottom).offset([self isIphone] ? -20 : -100);
+        make.bottom.equalTo(self.mas_bottom).offset(-20);
         make.centerX.equalTo(self.mas_centerX);
         make.width.lessThanOrEqualTo(self.mas_width).offset(-10).priority(750);
     }];
@@ -252,6 +253,9 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 - (void)setIsFullScreen:(BOOL)isFullScreen {
     _subtitleLabel.font = [UIFont boldSystemFontOfSize: isFullScreen ? textSizeFullScreen : textSizeNormal];
+    [_subtitleBackView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.mas_bottom).offset(isFullScreen ? paddingSubtileBottom : - 20);
+    }];
     _isFullScreen = isFullScreen;
 }
 
@@ -273,12 +277,6 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 - (void)setSubtitleBackViewColor:(UIColor *)color {
     _subtitleBackView.backgroundColor = color;
-}
-
-- (void)setSubtitlePaddingBottom:(CGFloat)paddingBottom {
-    [_subtitleBackView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.mas_bottom).offset(-paddingBottom);
-    }];
 }
 
 - (NSInteger)getCurrentPlaybackTime {

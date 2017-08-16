@@ -128,6 +128,5 @@ typedef NS_ENUM(NSInteger, ZFPlayerState) {
 - (void)setSubtitleTextSize:(CGFloat)fullScreen textSizeNormal:(CGFloat)normal;
 - (void)setSubtitleColor:(UIColor *)color;
 - (void)setSubtitleBackViewColor:(UIColor *)color;
-- (void)setSubtitlePaddingBottom:(CGFloat)paddingBottom;
 
 @end
