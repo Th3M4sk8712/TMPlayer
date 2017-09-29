@@ -46,6 +46,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @property (nonatomic, strong) UIView                *subtitleBackView;
 @property (nonatomic, strong) UILabel               *subtitleLabel;
 @property (nonatomic, strong) TMSubtitle            *subtitle;
+@property (nonatomic, strong) ZFPlayerControlView    *playerControlView;
 
 /** 播放属性 */
 @property (nonatomic, strong) AVPlayer               *player;
@@ -257,6 +258,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
         make.bottom.equalTo(self.mas_bottom).offset(isFullScreen ? paddingSubtileBottom : - 20);
     }];
     _isFullScreen = isFullScreen;
+    [_playerControlView setBtnBackHide:!_isFullScreen];
 }
 
 // NgocNK
@@ -283,6 +285,9 @@ typedef NS_ENUM(NSInteger, PanDirection){
     return (NSInteger)CMTimeGetSeconds([_playerItem currentTime]);
 }
 
+- (NSInteger)getDurationPlayTime {
+    return (NSInteger)CMTimeGetSeconds(_playerItem.asset.duration);
+}
 /**
  *  单例，用于列表cell上多个视频
  *
@@ -302,6 +307,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
         // 指定默认控制层
         ZFPlayerControlView *defaultControlView = [[ZFPlayerControlView alloc] init];
         self.controlView = defaultControlView;
+        self.playerControlView = defaultControlView;
     } else {
         self.controlView = controlView;
     }

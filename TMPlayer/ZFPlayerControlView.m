@@ -606,6 +606,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textColor = [UIColor whiteColor];
         _titleLabel.font = [UIFont systemFontOfSize:15.0];
+        _titleLabel.hidden = YES;
     }
     return _titleLabel;
 }
@@ -615,6 +616,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
         [_backBtn addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _backBtn.hidden = YES;
     }
     return _backBtn;
 }
@@ -1158,6 +1160,11 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 /** 下载按钮状态 */
 - (void)zf_playerDownloadBtnState:(BOOL)state {
     self.downLoadBtn.enabled = state;
+}
+
+- (void)setBtnBackHide:(BOOL)isHidden {
+    _backBtn.hidden = isHidden;
+    _titleLabel.hidden = isHidden;
 }
 
 #pragma clang diagnostic pop

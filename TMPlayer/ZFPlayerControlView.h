@@ -27,4 +27,6 @@
 
 @interface ZFPlayerControlView : UIView 
 
+- (void)setBtnBackHide:(BOOL)isHidden;
+
 @end
