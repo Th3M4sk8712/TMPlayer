@@ -1547,6 +1547,10 @@ typedef NS_ENUM(NSInteger, PanDirection){
     }
 }
 
+- (void)zf_controlView:(UIView *)controlView nextAction:(UIButton *)sender {
+    if ([self.delegate respondsToSelector:@selector(zf_playerNextAction)]) { [self.delegate zf_playerNextAction]; }
+}
+
 - (void)zf_controlView:(UIView *)controlView backAction:(UIButton *)sender {
     if (ZFPlayerShared.isLockScreen) {
         [self unLockTheScreen];

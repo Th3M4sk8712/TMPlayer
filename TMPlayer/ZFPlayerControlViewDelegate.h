@@ -36,6 +36,8 @@
 - (void)zf_controlView:(UIView *)controlView closeAction:(UIButton *)sender;
 /** 播放按钮事件 */
 - (void)zf_controlView:(UIView *)controlView playAction:(UIButton *)sender;
+/** NgocNK **/
+- (void)zf_controlView:(UIView *)controlView nextAction:(UIButton *)sender;
 /** 全屏按钮事件 */
 - (void)zf_controlView:(UIView *)controlView fullScreenAction:(UIButton *)sender;
 /** 锁定屏幕方向按钮时间 */
