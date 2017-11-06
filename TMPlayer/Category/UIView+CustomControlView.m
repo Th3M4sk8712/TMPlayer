@@ -81,6 +81,8 @@
  */
 - (void)zf_playerHasDownloadFunction:(BOOL)sender {}
 
+- (void)zf_playerHasNextFunction:(BOOL)sender {}
+
 /**
  * 下载按钮状态
  */

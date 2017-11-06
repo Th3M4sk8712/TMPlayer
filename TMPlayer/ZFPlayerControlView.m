@@ -49,6 +49,10 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 @property (nonatomic, strong) UIProgressView          *progressView;
 /** 滑杆 */
 @property (nonatomic, strong) ASValueTrackingSlider   *videoSlider;
+
+@property (nonatomic, strong) MPVolumeView             *airplayView;
+@property (nonatomic, strong) UIButton                *airplayBtn;
+
 /** 全屏按钮 */
 @property (nonatomic, strong) UIButton                *fullScreenBtn;
 /** 锁定屏幕方向按钮 */
@@ -107,7 +111,9 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
 @end
 
-@implementation ZFPlayerControlView
+@implementation ZFPlayerControlView {
+    UIButton *btnAirPlayVolume;
+}
 
 - (instancetype)init {
     self = [super init];
@@ -122,7 +128,9 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         [self.bottomImageView addSubview:self.progressView];
         [self.bottomImageView addSubview:self.videoSlider];
         [self.bottomImageView addSubview:self.fullScreenBtn];
+        [self.bottomImageView addSubview:self.airplayView];
         [self.bottomImageView addSubview:self.totalTimeLabel];
+        [self.airplayView addSubview:self.airplayBtn];
         
         [self.topImageView addSubview:self.downLoadBtn];
         [self addSubview:self.lockBtn];
@@ -155,6 +163,17 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterPlayground) name:UIApplicationDidBecomeActiveNotification object:nil];
 
         [self listeningRotating];
+        
+        for (UIButton *btn in _airplayView.subviews) {
+            if ([btn isKindOfClass:[UIButton class]] && btn.tag != 1) {
+                btnAirPlayVolume = btn;
+                [btnAirPlayVolume setImage:nil forState:UIControlStateNormal];
+                [btnAirPlayVolume setImage:nil forState:UIControlStateSelected];
+            }
+        }
+        [_airplayView setShowsVolumeSlider:NO];
+        [_airplayView setShowsRouteButton:YES];
+        _airplayView.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
@@ -178,13 +197,13 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     [self.topImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.trailing.equalTo(self);
         make.top.equalTo(self.mas_top).offset(0);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(60);
     }];
     
     [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.topImageView.mas_leading).offset(0);
         make.top.equalTo(self.topImageView.mas_top).offset(0);
-        make.width.height.mas_equalTo(50);
+        make.width.height.mas_equalTo(60);
     }];
 
     [self.downLoadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -202,27 +221,27 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.backBtn.mas_trailing).offset(5);
+        make.leading.equalTo(self.backBtn.mas_trailing).offset(0);
         make.centerY.equalTo(self.backBtn.mas_centerY);
         make.trailing.equalTo(self.resolutionBtn.mas_leading).offset(-10);
     }];
     
     [self.bottomImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.trailing.bottom.mas_equalTo(0);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(60);
     }];
     
     [self.startBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.bottomImageView.mas_leading).offset(0);
-        make.bottom.equalTo(self.bottomImageView.mas_bottom).offset(-5);
-        make.width.height.mas_equalTo(40);
+        make.bottom.equalTo(self.bottomImageView.mas_bottom).offset(0);
+        make.width.height.mas_equalTo(60);
     }];
     
-    self.nextBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    self.nextBtn.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
     [self.nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.startBtn.mas_trailing).offset(-5);
         make.centerY.equalTo(self.startBtn.mas_centerY);
-        make.width.height.mas_equalTo(40);
+        make.width.height.mas_equalTo(60);
     }];
     
     [self.currentTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -231,15 +250,24 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         make.width.mas_equalTo(43);
     }];
     
-    self.fullScreenBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     [self.fullScreenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.width.height.mas_equalTo(30);
-        make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-5);
+        make.width.height.mas_equalTo(60);
+        make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(0);
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
     
+    [self.airplayView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.height.mas_equalTo(40);
+        make.trailing.equalTo(self.fullScreenBtn.mas_leading).offset(0);
+        make.centerY.equalTo(self.startBtn.mas_centerY);
+    }];
+    
+    [self.airplayBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
+    }];
+    
     [self.totalTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.trailing.equalTo(self.fullScreenBtn.mas_leading).offset(-5);
+        make.trailing.equalTo(self.airplayView.mas_leading).offset(-10);
         make.centerY.equalTo(self.startBtn.mas_centerY);
         make.width.mas_equalTo(43);
     }];
@@ -253,14 +281,14 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     [self.videoSlider mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.currentTimeLabel.mas_trailing).offset(4);
         make.trailing.equalTo(self.totalTimeLabel.mas_leading).offset(-4);
-        make.centerY.equalTo(self.currentTimeLabel.mas_centerY).offset(-1);
+        make.centerY.equalTo(self.currentTimeLabel.mas_centerY).offset(0);
         make.height.mas_equalTo(30);
     }];
     
     [self.lockBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.mas_leading).offset(15);
+        make.leading.equalTo(self.mas_leading).offset(0);
         make.centerY.equalTo(self.mas_centerY);
-        //make.width.height.mas_equalTo(32);
+        make.width.height.mas_equalTo(60);
     }];
     
     [self.repeatBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -268,7 +296,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }];
     
     [self.playeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.width.height.mas_equalTo(50);
+        make.width.height.mas_equalTo(60);
         make.center.equalTo(self);
     }];
     
@@ -410,6 +438,10 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
 }
 
+- (void)airplayBtnClick:(UIButton *)sender {
+    [btnAirPlayVolume sendActionsForControlEvents:UIControlEventTouchUpInside];
+}
+
 - (void)fullScreenBtnClick:(UIButton *)sender {
     sender.selected = !sender.selected;
     if ([self.delegate respondsToSelector:@selector(zf_controlView:fullScreenAction:)]) {
@@ -501,10 +533,11 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)onDeviceOrientationChange {
     if (ZFPlayerShared.isLockScreen) { return; }
     self.lockBtn.hidden         = !self.isFullScreen;
-    self.nextBtn.hidden             = !self.isFullScreen;
+    self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.mas_equalTo(!self.isFullScreen ? 0 : 40);
+        make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
     }];
+    [self detectShowAirplayButton];
     self.fullScreenBtn.selected = self.isFullScreen;
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown || orientation == UIDeviceOrientationUnknown || orientation == UIDeviceOrientationPortraitUpsideDown) { return; }
@@ -520,16 +553,28 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
     self.fullScreen             = YES;
     self.lockBtn.hidden         = !self.isFullScreen;
-    self.nextBtn.hidden             = !self.isFullScreen;
+    self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.mas_equalTo(!self.isFullScreen ? 0 : 40);
+        make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
     }];
+    [self detectShowAirplayButton];
     self.fullScreenBtn.selected = self.isFullScreen;
     [self.backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+    [self.backBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
     [self.backBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.topImageView.mas_top).offset(23);
-        make.leading.equalTo(self.topImageView.mas_leading).offset(10);
-        make.width.height.mas_equalTo(40);
+        make.top.equalTo(self.topImageView.mas_top).offset(20);
+        make.leading.equalTo(self.topImageView.mas_leading).offset(0);
+        make.width.height.mas_equalTo(60);
+    }];
+}
+
+- (void)detectShowAirplayButton {
+    self.airplayView.hidden     = self.isFullScreen;
+    [self.airplayView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(self.isFullScreen ? 0 : 40);
+    }];
+    [self.totalTimeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.trailing.equalTo(self.airplayView.mas_leading).offset(self.isFullScreen ? 0 : -10);
     }];
 }
 /**
@@ -538,15 +583,19 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)setOrientationPortraitConstraint {
     self.fullScreen             = NO;
     self.lockBtn.hidden         = !self.isFullScreen;
-    self.nextBtn.hidden             = !self.isFullScreen;
+    self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.mas_equalTo(!self.isFullScreen ? 0 : 40);
+        make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
+    }];
+    self.airplayView.hidden     = self.isFullScreen;
+    [self.airplayView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(self.isFullScreen ? 0 : 40);
     }];
     self.fullScreenBtn.selected = self.isFullScreen;
     [self.backBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.topImageView.mas_top).offset(3);
+        make.top.equalTo(self.topImageView.mas_top).offset(0);
         make.leading.equalTo(self.topImageView.mas_leading).offset(10);
-        make.width.height.mas_equalTo(40);
+        make.width.height.mas_equalTo(60);
     }];
 
     if (self.isCellVideo) {
@@ -644,6 +693,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     if (!_backBtn) {
         _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+        _backBtn.showsTouchWhenHighlighted = true;
         [_backBtn addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         _backBtn.hidden = YES;
     }
@@ -675,6 +725,8 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _lockBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_lockBtn setImage:ZFPlayerImage(@"ZFPlayer_unlock-nor") forState:UIControlStateNormal];
         [_lockBtn setImage:ZFPlayerImage(@"ZFPlayer_lock-nor") forState:UIControlStateSelected];
+        [_lockBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _lockBtn.showsTouchWhenHighlighted = true;
         [_lockBtn addTarget:self action:@selector(lockScrrenBtnClick:) forControlEvents:UIControlEventTouchUpInside];
 
     }
@@ -686,6 +738,8 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _startBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_startBtn setImage:ZFPlayerImage(@"ZFPlayer_play") forState:UIControlStateNormal];
         [_startBtn setImage:ZFPlayerImage(@"ZFPlayer_pause") forState:UIControlStateSelected];
+        [_startBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _startBtn.showsTouchWhenHighlighted = true;
         [_startBtn addTarget:self action:@selector(playBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _startBtn;
@@ -737,6 +791,8 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _videoSlider.popUpViewArrowLength = 8;
 
         [_videoSlider setThumbImage:ZFPlayerImage(@"ZFPlayer_slider") forState:UIControlStateNormal];
+        [_videoSlider setThumbImage:ZFPlayerImage(@"ZFPlayer_slider_big") forState:UIControlStateHighlighted];
+        [_videoSlider setThumbImage:ZFPlayerImage(@"ZFPlayer_slider_big") forState:UIControlStateSelected];
         _videoSlider.maximumValue          = 1;
         _videoSlider.minimumTrackTintColor = [UIColor whiteColor];
         _videoSlider.maximumTrackTintColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
@@ -772,11 +828,33 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     return _totalTimeLabel;
 }
 
+- (MPVolumeView *)airplayView {
+    if (!_airplayView) {
+        _airplayView = [MPVolumeView new];
+    }
+    return _airplayView;
+}
+
+- (UIButton *)airplayBtn {
+    if (!_airplayBtn) {
+        _airplayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_airplayBtn setImage:ZFPlayerImage(@"ZFPlayer_airplay") forState:UIControlStateNormal];
+        [_airplayBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _airplayBtn.showsTouchWhenHighlighted = YES;
+        _airplayBtn.tag = 1;
+        [_airplayBtn addTarget:self action:@selector(airplayBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _airplayBtn;
+}
+
 - (UIButton *)fullScreenBtn {
     if (!_fullScreenBtn) {
         _fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_fullScreenBtn setImage:ZFPlayerImage(@"ZFPlayer_fullscreen") forState:UIControlStateNormal];
         [_fullScreenBtn setImage:ZFPlayerImage(@"ZFPlayer_shrinkscreen") forState:UIControlStateSelected];
+        [_fullScreenBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _fullScreenBtn.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
+        _fullScreenBtn.showsTouchWhenHighlighted = YES;
         [_fullScreenBtn addTarget:self action:@selector(fullScreenBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _fullScreenBtn;
@@ -796,6 +874,8 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     if (!_repeatBtn) {
         _repeatBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_repeatBtn setImage:ZFPlayerImage(@"ZFPlayer_repeat_video") forState:UIControlStateNormal];
+        [_repeatBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _repeatBtn.showsTouchWhenHighlighted = YES;
         [_repeatBtn addTarget:self action:@selector(repeatBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _repeatBtn;
@@ -825,6 +905,9 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     if (!_playeBtn) {
         _playeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_playeBtn setImage:ZFPlayerImage(@"ZFPlayer_play_btn") forState:UIControlStateNormal];
+        [_playeBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _playeBtn.imageEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
+        _playeBtn.showsTouchWhenHighlighted = YES;
         [_playeBtn addTarget:self action:@selector(centerPlayBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _playeBtn;
@@ -835,6 +918,8 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         _failBtn = [UIButton buttonWithType:UIButtonTypeSystem];
         [_failBtn setTitle:@"Loading fail. Please click retry!" forState:UIControlStateNormal];
         [_failBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_failBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _failBtn.showsTouchWhenHighlighted = YES;
         _failBtn.titleLabel.font = [UIFont systemFontOfSize:14.0];
         _failBtn.backgroundColor = RGBA(0, 0, 0, 0.7);
         [_failBtn addTarget:self action:@selector(failBtnClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -931,10 +1016,11 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     self.showing                     = NO;
     self.playeEnd                    = NO;
     self.lockBtn.hidden              = !self.isFullScreen;
-    self.nextBtn.hidden             = !self.isFullScreen;
+    self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.mas_equalTo(!self.isFullScreen ? 0 : 40);
+        make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
     }];
+    [self detectShowAirplayButton];
     self.failBtn.hidden              = YES;
     self.placeholderImageView.alpha  = 1;
     [self hideControlView];
@@ -1147,6 +1233,11 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  */
 - (void)zf_playerHasDownloadFunction:(BOOL)sender {
     self.downLoadBtn.hidden = !sender;
+}
+
+- (void)zf_playerHasNextFunction:(BOOL)sender {
+    self.nextBtn.hidden = !sender;
+    self.nextBtn.tag = !sender ? 96 : 0;
 }
 
 /**

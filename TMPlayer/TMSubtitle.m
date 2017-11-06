@@ -58,6 +58,9 @@
         // Addresses trailing space added if CRLF is on a line by itself at the end of the SRT file
         textString = [textString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         // END EDIT
+        if (textString == NULL) {
+            textString = @"";
+        }
         
         NSDictionary *dictionary = @{@"index" : indexString,
                                      @"start" : @([self timeFromString: startString]),

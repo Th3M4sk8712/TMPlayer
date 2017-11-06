@@ -350,6 +350,7 @@
 				ORGANIZATIONNAME = "Nguyễn Khánh Ngọc";
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
+						DevelopmentTeam = YTX95ZPWED;
 						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
@@ -673,14 +674,15 @@
 			baseConfigurationReference = 4EF5A64EF00C82019B877F75 /* Pods-TMPlayer_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YTX95ZPWED;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TMPlayer/TMPlayer-Prefix.pch";
 				INFOPLIST_FILE = "TMPlayer/TMPlayer-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "78186f51-b7b1-47c5-9218-f68c3e563327";
+				PROVISIONING_PROFILE_SPECIFIER = "IOS Team - Dev";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -690,14 +692,15 @@
 			baseConfigurationReference = 8984DB05D5F6C685AF1581BA /* Pods-TMPlayer_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YTX95ZPWED;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TMPlayer/TMPlayer-Prefix.pch";
 				INFOPLIST_FILE = "TMPlayer/TMPlayer-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "78186f51-b7b1-47c5-9218-f68c3e563327";
+				PROVISIONING_PROFILE_SPECIFIER = "IOS Team - Dev";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

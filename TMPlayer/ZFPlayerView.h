@@ -65,6 +65,8 @@ typedef NS_ENUM(NSInteger, ZFPlayerState) {
 @property (nonatomic, assign) BOOL                    hasDownload;
 /** 是否开启预览图 */
 @property (nonatomic, assign) BOOL                    hasPreviewView;
+/** NgocNK */
+@property (nonatomic, assign) BOOL                    hasNext;
 /** 设置代理 */
 @property (nonatomic, weak) id<ZFPlayerDelegate>      delegate;
 /** 是否被用户暂停 */
@@ -130,5 +132,6 @@ typedef NS_ENUM(NSInteger, ZFPlayerState) {
 - (void)setSubtitleTextSize:(CGFloat)fullScreen textSizeNormal:(CGFloat)normal;
 - (void)setSubtitleColor:(UIColor *)color;
 - (void)setSubtitleBackViewColor:(UIColor *)color;
+- (UIImage *)generateThumbImage;
 
 @end

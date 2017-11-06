@@ -282,11 +282,11 @@ typedef NS_ENUM(NSInteger, PanDirection){
 }
 
 - (NSInteger)getCurrentPlaybackTime {
-    return (NSInteger)CMTimeGetSeconds([_playerItem currentTime]);
+    return (NSInteger)CMTimeGetSeconds([_player.currentItem currentTime]);
 }
 
 - (NSInteger)getDurationPlayTime {
-    return (NSInteger)CMTimeGetSeconds(_playerItem.asset.duration);
+    return (NSInteger)CMTimeGetSeconds(_player.currentItem.asset.duration);
 }
 /**
  *  单例，用于列表cell上多个视频
@@ -418,6 +418,15 @@ typedef NS_ENUM(NSInteger, PanDirection){
     if (self.state == ZFPlayerStatePlaying) { self.state = ZFPlayerStatePause;}
     self.isPauseByUser = YES;
     [_player pause];
+}
+
+- (UIImage *)generateThumbImage {
+    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:_player.currentItem.asset];
+    CMTime time = CMTimeMake(CMTimeGetSeconds(_player.currentItem.currentTime), 1);
+    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:time actualTime:NULL error:NULL];
+    UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    return thumbnail;
 }
 
 #pragma mark - Private Method
@@ -789,8 +798,8 @@ typedef NS_ENUM(NSInteger, PanDirection){
             ZFBrightnessView *brightnessView = [ZFBrightnessView sharedBrightnessView];
             [[UIApplication sharedApplication].keyWindow insertSubview:self belowSubview:brightnessView];
             [self mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.width.equalTo(@(ScreenHeight));
-                make.height.equalTo(@(ScreenWidth));
+                make.width.mas_equalTo([UIScreen mainScreen].bounds.size.height);
+                make.height.mas_equalTo([UIScreen mainScreen].bounds.size.width);
                 make.center.equalTo([UIApplication sharedApplication].keyWindow);
             }];
         }
@@ -1438,6 +1447,11 @@ typedef NS_ENUM(NSInteger, PanDirection){
 - (void)setHasDownload:(BOOL)hasDownload {
     _hasDownload = hasDownload;
     [self.controlView zf_playerHasDownloadFunction:hasDownload];
+}
+
+- (void)setHasNext:(BOOL)hasNext {
+    _hasNext = hasNext;
+    [self.controlView zf_playerHasNextFunction:hasNext];
 }
 
 - (void)setResolutionDic:(NSDictionary *)resolutionDic {

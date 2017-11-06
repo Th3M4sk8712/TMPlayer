@@ -30,7 +30,7 @@
     self.playerView.hasPreviewView = YES;
     [self.playerView playerControlView: nil playerModel:playerModel];
     //[self.playerView addSubtitleURL:@"..."];
-    [self.playerView autoPlayTheVideo];
+    //[self.playerView resetToPlayNewVideo:playerModel];
 }
 
 - (BOOL)shouldAutorotate {
