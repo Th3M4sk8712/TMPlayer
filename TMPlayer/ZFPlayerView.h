@@ -39,6 +39,7 @@
 - (void)zf_playerControlViewWillHidden:(UIView *)controlView isFullscreen:(BOOL)fullscreen;
 /** NgocNK **/
 - (void)zf_playerNextAction;
+- (void)zf_playerPictureAction;
 @end
 
 // playerLayer的填充模式（默认：等比例填充，直到一个维度到达区域边界）

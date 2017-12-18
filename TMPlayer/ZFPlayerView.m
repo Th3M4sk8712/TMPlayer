@@ -795,8 +795,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
         // 这个地方加判断是为了从全屏的一侧,直接到全屏的另一侧不用修改限制,否则会出错;
         if (currentOrientation == UIInterfaceOrientationPortrait) {
             [self removeFromSuperview];
-            ZFBrightnessView *brightnessView = [ZFBrightnessView sharedBrightnessView];
-            [[UIApplication sharedApplication].keyWindow insertSubview:self belowSubview:brightnessView];
+            [[UIApplication sharedApplication].keyWindow addSubview:self];
             [self mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo([UIScreen mainScreen].bounds.size.height);
                 make.height.mas_equalTo([UIScreen mainScreen].bounds.size.width);
@@ -1563,6 +1562,16 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 - (void)zf_controlView:(UIView *)controlView nextAction:(UIButton *)sender {
     if ([self.delegate respondsToSelector:@selector(zf_playerNextAction)]) { [self.delegate zf_playerNextAction]; }
+}
+
+- (void)zf_controlView:(UIView *)controlView skipAheadAction:(UIButton *)sender {
+    NSInteger skipSeekTime = [self getCurrentPlaybackTime] + 15;
+    NSInteger durationTime = [self getDurationPlayTime];
+    if (skipSeekTime > durationTime) {
+        skipSeekTime = durationTime;
+    }
+    [self seekToTime:skipSeekTime completionHandler:nil];
+    if ([self.delegate respondsToSelector:@selector(zf_playerPictureAction)]) { [self.delegate zf_playerPictureAction]; }
 }
 
 - (void)zf_controlView:(UIView *)controlView backAction:(UIButton *)sender {

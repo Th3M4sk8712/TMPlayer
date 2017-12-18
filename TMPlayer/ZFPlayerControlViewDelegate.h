@@ -42,6 +42,8 @@
 - (void)zf_controlView:(UIView *)controlView fullScreenAction:(UIButton *)sender;
 /** 锁定屏幕方向按钮时间 */
 - (void)zf_controlView:(UIView *)controlView lockScreenAction:(UIButton *)sender;
+/** Picture Action */
+- (void)zf_controlView:(UIView *)controlView skipAheadAction:(UIButton *)sender;
 /** 重播按钮事件 */
 - (void)zf_controlView:(UIView *)controlView repeatPlayAction:(UIButton *)sender;
 /** 中间播放按钮事件 */

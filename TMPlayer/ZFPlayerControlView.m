@@ -35,6 +35,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
 @interface ZFPlayerControlView () <UIGestureRecognizerDelegate>
 
+@property (nonatomic, strong) UIButton              *skipAheadBtn;
 /** 标题 */
 @property (nonatomic, strong) UILabel                 *titleLabel;
 /** NgocNK **/
@@ -134,6 +135,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         
         [self.topImageView addSubview:self.downLoadBtn];
         [self addSubview:self.lockBtn];
+        [self addSubview:self.skipAheadBtn];
         [self.topImageView addSubview:self.backBtn];
         [self addSubview:self.activity];
         [self addSubview:self.repeatBtn];
@@ -291,6 +293,12 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         make.width.height.mas_equalTo(60);
     }];
     
+    [self.skipAheadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.trailing.equalTo(self.mas_trailing).offset(0);
+        make.centerY.equalTo(self.mas_centerY);
+        make.width.height.mas_equalTo(60);
+    }];
+    
     [self.repeatBtn mas_makeConstraints:^(MASConstraintMaker *make) {
          make.center.equalTo(self);
     }];
@@ -419,6 +427,12 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
 }
 
+- (void)skipAheadBtnClick:(UIButton *)sender {
+    if ([self.delegate respondsToSelector:@selector(zf_controlView:skipAheadAction:)]) {
+        [self.delegate zf_controlView:self skipAheadAction:sender];
+    }
+}
+
 - (void)playBtnClick:(UIButton *)sender {
     sender.selected = !sender.selected;
     if ([self.delegate respondsToSelector:@selector(zf_controlView:playAction:)]) {
@@ -533,6 +547,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)onDeviceOrientationChange {
     if (ZFPlayerShared.isLockScreen) { return; }
     self.lockBtn.hidden         = !self.isFullScreen;
+    self.skipAheadBtn.hidden         = !self.isFullScreen;
     self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
@@ -553,6 +568,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
     self.fullScreen             = YES;
     self.lockBtn.hidden         = !self.isFullScreen;
+    self.skipAheadBtn.hidden   = !self.isFullScreen;
     self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
@@ -583,6 +599,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)setOrientationPortraitConstraint {
     self.fullScreen             = NO;
     self.lockBtn.hidden         = !self.isFullScreen;
+    self.skipAheadBtn.hidden         = !self.isFullScreen;
     self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));
@@ -610,9 +627,11 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     if (self.lockBtn.isSelected) {
         self.topImageView.alpha    = 0;
         self.bottomImageView.alpha = 0;
+        self.skipAheadBtn.alpha = 0;
     } else {
         self.topImageView.alpha    = 1;
         self.bottomImageView.alpha = 1;
+        self.skipAheadBtn.alpha = 1;
     }
     self.backgroundColor           = RGBA(0, 0, 0, 0.3);
     self.lockBtn.alpha             = 1;
@@ -625,6 +644,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
 - (void)hideControlView {
     self.showing = NO;
+    self.skipAheadBtn.alpha = 0;
     self.backgroundColor          = RGBA(0, 0, 0, 0);
     self.topImageView.alpha       = self.playeEnd;
     self.bottomImageView.alpha    = 0;
@@ -731,6 +751,17 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
     }
     return _lockBtn;
+}
+
+- (UIButton *)skipAheadBtn {
+    if (!_skipAheadBtn) {
+        _skipAheadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_skipAheadBtn setImage:ZFPlayerImage(@"ZFPlayer_skip_ahead") forState:UIControlStateNormal];
+        [_skipAheadBtn setBackgroundImage:ZFPlayerImage(@"ZFPlayer_light_big") forState:UIControlStateHighlighted];
+        _skipAheadBtn.showsTouchWhenHighlighted = true;
+        [_skipAheadBtn addTarget:self action:@selector(skipAheadBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _skipAheadBtn;
 }
 
 - (UIButton *)startBtn {
@@ -1016,6 +1047,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     self.showing                     = NO;
     self.playeEnd                    = NO;
     self.lockBtn.hidden              = !self.isFullScreen;
+    self.skipAheadBtn.hidden              = !self.isFullScreen;
     self.nextBtn.hidden             = self.nextBtn.tag == 96 ? true : !self.isFullScreen;
     [self.nextBtn mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(!self.isFullScreen ? 0 : (self.nextBtn.tag == 96 ? 0 : 40));

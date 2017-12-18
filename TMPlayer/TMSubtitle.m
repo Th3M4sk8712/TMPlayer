@@ -16,7 +16,11 @@
     self = [super init];
     if (self != nil) {
         subtitlesParts = [NSMutableArray array];
-        [self requestGetSubtitle:url];
+        if ([url containsString:@"http"] || [url containsString:@"https"]) {
+            [self requestGetSubtitle:url];
+        } else {
+            [self getSubtitleLocal:url];
+        }
     }
     return self;
 }
@@ -31,6 +35,13 @@
         NSString *requestReply = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
         [self parseSRTString:requestReply];
     }] resume];
+}
+
+- (void)getSubtitleLocal:(NSString*)url {
+    NSString *content = [NSString stringWithContentsOfFile:url
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:NULL];
+    [self parseSRTString:content];
 }
 
 - (void)parseSRTString:(NSString *)string {
