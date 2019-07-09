@@ -186,6 +186,19 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 }
 
 - (void)makeSubViewsConstraints {
+    BOOL isIphoneX = NO;
+    if ([[UIDevice currentDevice]userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        switch ((int)[[UIScreen mainScreen] nativeBounds].size.height) {
+            case 2436:
+            case 2688:
+            case 1792:
+                isIphoneX = YES;
+                break;
+            default:
+                printf("iPhone");
+        }
+    }
+    
     [self.placeholderImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsZero);
     }];
@@ -288,13 +301,13 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }];
     
     [self.lockBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.mas_leading).offset(0);
+        make.leading.equalTo(self.mas_leading).offset(isIphoneX ? 30 : 0);
         make.centerY.equalTo(self.mas_centerY);
         make.width.height.mas_equalTo(60);
     }];
     
     [self.skipAheadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.trailing.equalTo(self.mas_trailing).offset(0);
+        make.trailing.equalTo(self.mas_trailing).offset(isIphoneX ? -30 : 0);
         make.centerY.equalTo(self.mas_centerY);
         make.width.height.mas_equalTo(60);
     }];
@@ -556,6 +569,9 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     self.fullScreenBtn.selected = self.isFullScreen;
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown || orientation == UIDeviceOrientationUnknown || orientation == UIDeviceOrientationPortraitUpsideDown) { return; }
+    
+    if ((orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight) && self.isFullScreen) { return; }
+    
     if (!self.isShrink && !self.isPlayEnd && !self.showing) {
         // 显示、隐藏控制层
         [self zf_playerShowOrHideControlView];
@@ -689,7 +705,7 @@ static const CGFloat ZFPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)setShrink:(BOOL)shrink {
     _shrink = shrink;
     self.closeBtn.hidden = !shrink;
-    self.bottomProgressView.hidden = shrink;
+    self.bottomProgressView.hidden = YES;//shrink;
 }
 
 - (void)setFullScreen:(BOOL)fullScreen {

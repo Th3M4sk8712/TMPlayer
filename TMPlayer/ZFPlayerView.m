@@ -182,16 +182,28 @@ typedef NS_ENUM(NSInteger, PanDirection){
     return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone;
 }
 
+- (BOOL)isIphoneX {
+    if ([[UIDevice currentDevice]userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        switch ((int)[[UIScreen mainScreen] nativeBounds].size.height) {
+            case 2436:
+            case 2688:
+            case 1792:
+                return YES;
+                
+            default:
+                return NO;
+        }
+    }
+    return NO;
+}
+
 - (void)addSubtitleView {
     textSizeNormal = [self isIphone] ? 13 : 15;
     textSizeFullScreen = [self isIphone] ? 18 : 30;
-    paddingSubtileBottom = [self isIphone] ? -20 : -100;
+    paddingSubtileBottom = [self isIphone] ? ([self isIphoneX] ? -30 : -20) : -100;
     self.subtitleLabel = [[UILabel alloc] init];
-    self.subtitleLabel.numberOfLines = 0;
-    self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
+    self.subtitleLabel.numberOfLines = 2;
     self.subtitleLabel.textColor = [UIColor whiteColor];
-    self.subtitleLabel.adjustsFontSizeToFitWidth = YES;
-    self.subtitleLabel.minimumScaleFactor = 0.5;
     self.subtitleLabel.font = [UIFont boldSystemFontOfSize: textSizeNormal];
     
     self.subtitleBackView = [[UIView alloc] init];
@@ -205,7 +217,8 @@ typedef NS_ENUM(NSInteger, PanDirection){
     [self.subtitleBackView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.mas_bottom).offset(-20);
         make.centerX.equalTo(self.mas_centerX);
-        make.width.lessThanOrEqualTo(self.mas_width).offset(-10).priority(750);
+        NSNumber *width = @([UIScreen mainScreen].bounds.size.height - 20);
+        make.width.lessThanOrEqualTo(width);
     }];
     
     [self.subtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -254,8 +267,9 @@ typedef NS_ENUM(NSInteger, PanDirection){
 
 - (void)setIsFullScreen:(BOOL)isFullScreen {
     _subtitleLabel.font = [UIFont boldSystemFontOfSize: isFullScreen ? textSizeFullScreen : textSizeNormal];
+    CGFloat offsetBottom = isFullScreen ? paddingSubtileBottom : -20;
     [_subtitleBackView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.mas_bottom).offset(isFullScreen ? paddingSubtileBottom : - 20);
+        make.bottom.equalTo(self.mas_bottom).offset(offsetBottom);
     }];
     _isFullScreen = isFullScreen;
     [_playerControlView setBtnBackHide:!_isFullScreen];

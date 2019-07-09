@@ -33,6 +33,9 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSString *requestReply = [[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
+        if (requestReply == NULL) {
+            requestReply = [[NSString alloc] initWithData:data encoding: NSUnicodeStringEncoding];
+        }
         [self parseSRTString:requestReply];
     }] resume];
 }
@@ -41,6 +44,11 @@
     NSString *content = [NSString stringWithContentsOfFile:url
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
+    if (content == NULL) {
+        content = [NSString stringWithContentsOfFile:url
+                                            encoding:NSUnicodeStringEncoding
+                                               error:NULL];
+    }
     [self parseSRTString:content];
 }
 
