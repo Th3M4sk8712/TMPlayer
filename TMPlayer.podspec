@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TMPlayer'
-  s.version          = '1.1.9'
+  s.version          = '1.2.1'
   s.summary          = 'A perfect player based on ZFPlayer'
 
 # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ A perfect player based on ZFPlayer made by renzifeng, extend by Nguyễn Khánh 
   s.source           = { :git => 'https://github.com/Th3M4sk8712/TMPlayer.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'TMPlayer/**/*.{h,m}'
   s.resources = 'TMPlayer/ZFPlayer.bundle'
