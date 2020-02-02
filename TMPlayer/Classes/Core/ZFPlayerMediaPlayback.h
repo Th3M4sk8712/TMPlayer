@@ -173,8 +173,8 @@ typedef NS_ENUM(NSInteger, ZFPlayerScalingMode) {
 /// Use this method to seek to a specified time for the current player and to be notified when the seek operation is complete.
 - (void)seekToTime:(NSTimeInterval)time completionHandler:(void (^ __nullable)(BOOL finished))completionHandler;
 
-- (NSInteger)getCurrentPlaybackTime;
-- (NSInteger)getDurationPlayTime;
+- (NSInteger)currentPlaybackTime;
+- (NSInteger)durationPlayTime;
 
 @end
 

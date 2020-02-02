@@ -226,11 +226,11 @@ static NSString *const kPresentationSize         = @"presentationSize";
     return image;
 }
 
-- (NSInteger)getCurrentPlaybackTime {
+- (NSInteger)currentPlaybackTime {
   return (NSInteger)CMTimeGetSeconds([_player.currentItem currentTime]);
 }
 
-- (NSInteger)getDurationPlayTime {
+- (NSInteger)durationPlayTime {
   return (NSInteger)CMTimeGetSeconds(_player.currentItem.asset.duration);
 }
 
